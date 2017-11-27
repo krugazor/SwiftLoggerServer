@@ -40,7 +40,7 @@ func loggerHandler(loggerData: LoggerData, respondWith: @escaping (Result?, Requ
     //
     // defautl terminal output color
     var messageColor: String = "\u{001B}[0;32m"
-    
+
     // colors for different log types
     switch loggerData.logType {
     case "DEBUG":
@@ -56,56 +56,57 @@ func loggerHandler(loggerData: LoggerData, respondWith: @escaping (Result?, Requ
         break
     }
 
-    
+
     // get current date&time
     let currentDateTime = Date()
-    
+
     // initialize the date formatter and set the style
     let formatter = DateFormatter()
     formatter.timeStyle = .medium
     formatter.dateStyle = .medium
-    
-    
+
+
     // calendar is used to create unique filename each day for logged data
     let calendar = Calendar.current
-    
+
     let year = calendar.component(.year, from: currentDateTime)
     let month = calendar.component(.month, from: currentDateTime)
     let day = calendar.component(.day, from: currentDateTime)
-    
+
     // get the date time String from the date object
     let timeStamp = formatter.string(from: currentDateTime)
-    
-    
+
+
     //
     // define output line
     //
-    
-    let outputLine = String(format: "\(messageColor)***** \(loggerData.logType) ***** APP: \(loggerData.appName) ***** \(timeStamp) ***** SOURCE: \(loggerData.sourceFile) ***** METHOD: \(loggerData.function) ***** AT LINE: \(loggerData.lineNumber) ***** >>> \(loggerData.logText)")
-    
+
+    let outputLineForTerminal = String(format: "\(messageColor)***** \(loggerData.logType) ***** APP: \(loggerData.appName) ***** \(timeStamp) ***** SOURCE: \(loggerData.sourceFile) ***** METHOD: \(loggerData.function) ***** AT LINE: \(loggerData.lineNumber) ***** >>> \(loggerData.logText)")
+    let outputLineForFile = String(format: "***** \(loggerData.logType) ***** APP: \(loggerData.appName) ***** \(timeStamp) ***** SOURCE: \(loggerData.sourceFile) ***** METHOD: \(loggerData.function) ***** AT LINE: \(loggerData.lineNumber) ***** >>> \(loggerData.logText)")
+
     // terminal output
     func outputToTerminal() {
-        print(outputLine)
+        print(outputLineForTerminal)
     }
-    
+
     // file & terminal output
     func outputToFile() {
-        
+
         // assign calendar data to appName for filename
         let filename = loggerData.appName + "-" + String(year) + "-" + String(month) + "-" + String(day) + ".log"
-        
+
         // new line character should be added after each log
-        let logString = outputLine + "\n"
-        
+        let logString = outputLineForFile + "\n"
+
         // get data object to be written in a log file
         let logData = logString.data(using: String.Encoding.utf8, allowLossyConversion: false)!
-        
+
         // get current application path and define fileURL
         let fileManager = FileManager.default
         let directory = fileManager.currentDirectoryPath + "/data"
-        
+
         let fileURL = URL(fileURLWithPath: directory).appendingPathComponent(filename, isDirectory: false)
-        
+
         // check if logFileTargetDirectory exists and create one if neccessary
         if !FileManager.default.fileExists(atPath: "data") {
 
@@ -116,7 +117,7 @@ func loggerHandler(loggerData: LoggerData, respondWith: @escaping (Result?, Requ
                 respondWith(nil, .internalServerError)
             }
         }
-        
+
         // check file existance at target directory and store logger data line
         if FileManager.default.fileExists(atPath: fileURL.path) {
             do {
@@ -139,8 +140,8 @@ func loggerHandler(loggerData: LoggerData, respondWith: @escaping (Result?, Requ
             }
         }
     }
-    
-    
+
+
     // output target "file" has to be explicitly stated, othewise, terminal output will be implemented
     switch loggerData.logTarget {
     case "file":
@@ -149,10 +150,9 @@ func loggerHandler(loggerData: LoggerData, respondWith: @escaping (Result?, Requ
     default:
         outputToTerminal()
     }
-    
-    let result = Result(status: "OK", message: "Data Logged Successfully")
- 
-    respondWith(result, nil)
-    
-}
 
+    let result = Result(status: "OK", message: "Data Logged Successfully")
+
+    respondWith(result, nil)
+
+}
