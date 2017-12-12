@@ -45,7 +45,7 @@ Example JSON representation of request body:
 ```
 
 Available values for logType key are: "DEBUG", "INFO", "WARNING" & "ERROR"
-Available values for logTarget key are: "terminal", "file"
+Available values for logTarget key are: "terminal", "file", or "both"
 
 By using: [Swift Logger Client](https://github.com/Mladen-K/Swift-Logger-Client), all fields except type and message are automatically configured and populated.
 

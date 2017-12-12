@@ -142,11 +142,13 @@ func loggerHandler(loggerData: LoggerData, respondWith: @escaping (Result?, Requ
     }
 
 
-    // output target "file" has to be explicitly stated, othewise, terminal output will be implemented
+    // output target "file" or "both" has to be explicitly stated, othewise, terminal output will be implemented
     switch loggerData.logTarget {
     case "file":
-        outputToTerminal()
         outputToFile()
+    case "both":
+        outputToFile()
+        outputToTerminal()
     default:
         outputToTerminal()
     }
