@@ -35,6 +35,11 @@ public class LoggerRouter {
         defer {
             // SwiftLogger Backend Route (define handler)
             _router.post("/logger", handler: loggerHandler)
+            
+            _router.get("/") { req, res, next in
+                res.status(.notFound)
+                next()
+            }
         }
     }
     
