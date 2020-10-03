@@ -6,6 +6,8 @@
 //  Copyright © 2017 Craftwell · http://www.craftwell.io
 //  MIT License · http://choosealicense.com/licenses/mit/
 //
+//  Updated by Nicolas Zinovieff
+//
 
 
 import Foundation
