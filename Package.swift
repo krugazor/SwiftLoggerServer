@@ -37,7 +37,7 @@ let package = Package(
             dependencies: ["SwiftLoggerCommon"]),
         .testTarget(
             name: "SwiftLoggerClientTests",
-            dependencies: ["SwiftLoggerClient"]),
+            dependencies: ["SwiftLoggerClient", "SwiftLoggerRouter"]),
 
     ]
 )

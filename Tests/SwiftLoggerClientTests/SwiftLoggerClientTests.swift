@@ -1,18 +1,32 @@
 import XCTest
+import Kitura
+#if os(Linux)
+import Dispatch
+#endif
 @testable import SwiftLoggerClient
+@testable import SwiftLoggerRouter
 
 class SwiftLoggerClientTests: XCTestCase {
-    func testExample() {
+    func testHTTP() {
+        let router = LoggerRouter.httpLoggerRouter(logToFile: false, logToUI: true)
+        Kitura.addHTTPServer(onPort: 8080, with: router.router)
+        
+        // start the Kitura runloop (this call never returns)
+        DispatchQueue.global(qos: .background).async {
+            Kitura.run()
+        }
         SwiftLogger.setupForHTTP(URL(string: "http://localhost:8080")!, appName: "Test")
         
-        SwiftLogger.i(message: "This is an information")
-        SwiftLogger.d(message: "This is a debug message")
-        SwiftLogger.w(message: "This is a warning")
-        SwiftLogger.e(message: "This is an error")
+        measure {
+            SwiftLogger.i(message: "This is an information")
+            SwiftLogger.d(message: "This is a debug message")
+            SwiftLogger.w(message: "This is a warning")
+            SwiftLogger.e(message: "This is an error")
+        }
     }
-
-
+    
+    
     static var allTests = [
-        ("testExample", testExample),
+        ("testExample", testHTTP),
     ]
 }
