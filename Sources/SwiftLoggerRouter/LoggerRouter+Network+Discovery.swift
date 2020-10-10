@@ -17,6 +17,10 @@ public class NetworkLoggerRouter : LoggerRouter, PeerConnectionDelegate {
     }
     let passcode: String
     
+    deinit {
+        print("got scrapped")
+    }
+    
     private var networkListener : NWListener?
     private var networkConnections : [PeerConnection] = []
 
@@ -88,9 +92,8 @@ public class NetworkLoggerRouter : LoggerRouter, PeerConnectionDelegate {
             }
 
             listener.newConnectionHandler = { newConnection in
-                if let delegate = self.delegate {
-                    self.networkConnections.append(PeerConnection(connection: newConnection, delegate: delegate))
-                }
+                print("incoming connection")
+                self.networkConnections.append(PeerConnection(connection: newConnection, delegate: self))
             }
 
             // Start listening, and request updates on the main queue.

@@ -21,7 +21,6 @@ public class PeerConnection : Equatable {
     var connection: NWConnection?
     let initiatedConnection: Bool
 
-    // Create an outbound connection when the user initiates a game.
     public init(endpoint: NWEndpoint, interface: NWInterface?, passcode: String, delegate: PeerConnectionDelegate) {
         self.delegate = delegate
         self.initiatedConnection = true
@@ -32,7 +31,6 @@ public class PeerConnection : Equatable {
         startConnection()
     }
 
-    // Handle an inbound connection when the user receives a game request.
     public init(connection: NWConnection, delegate: PeerConnectionDelegate) {
         self.delegate = delegate
         self.connection = connection
@@ -41,7 +39,6 @@ public class PeerConnection : Equatable {
         startConnection()
     }
 
-    // Handle the user exiting the game.
     public func cancel() {
         if let connection = self.connection {
             connection.cancel()
@@ -79,7 +76,7 @@ public class PeerConnection : Equatable {
         }
 
         // Start the connection establishment.
-        connection.start(queue: .main)
+        connection.start(queue: .global(qos: .background))
     }
 
     // Handle sending a log message.

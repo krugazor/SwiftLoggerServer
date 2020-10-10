@@ -12,7 +12,6 @@ enum LoggerProtocolMessageType: UInt32 {
 }
 public class LoggerProtocol: NWProtocolFramerImplementation {
 
-    // Create a global definition of your game protocol to add to connections.
     public static let definition = NWProtocolFramer.Definition(implementation: LoggerProtocol.self)
 
     // Set a name for your protocol for use in debugging.

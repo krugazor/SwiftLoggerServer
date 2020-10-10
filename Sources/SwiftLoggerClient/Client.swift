@@ -80,15 +80,15 @@ public class SwiftLogger {
     fileprivate var server : URL
     public var debug : Bool = false
     
-    fileprivate init(_ url: URL, appName n: String) { // HTTP client
+    init(_ url: URL, appName n: String) { // HTTP client
         server = url
         appName = n
     }
     
-    static private var _sharedInstance : SwiftLogger?
+    static var _sharedInstance : SwiftLogger?
     
     // for overriding purposes
-    fileprivate func send(_ log: LoggerData, success: @escaping (Bool)->Void) {
+    open func send(_ log: LoggerData, success: @escaping (Bool)->Void) {
         sendHTTP(log) { (result) in
             success(result)
         }

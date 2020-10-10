@@ -3,7 +3,7 @@ import Foundation
 
 // logger data model
 public struct LoggerData : Codable {
-    public static let defaultPasscode = "Ain't SwiftLogger Wunderbar?"
+    public static let defaultPasscode = "SwiftLoggerPasscode"
     public enum LoggerType : String, Codable {
         case DEBUG
         case INFO

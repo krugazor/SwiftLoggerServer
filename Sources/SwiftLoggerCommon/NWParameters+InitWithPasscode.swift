@@ -20,7 +20,7 @@ public extension NWParameters {
 		// Enable using a peer-to-peer link.
 		self.includePeerToPeer = true
 
-		// Add your custom game protocol to support game messages.
+		// Add your custom protocol to support messages.
 		let loggerOptions = NWProtocolFramer.Options(definition: LoggerProtocol.definition)
 		self.defaultProtocolStack.applicationProtocols.insert(loggerOptions, at: 0)
 	}
