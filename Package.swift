@@ -5,7 +5,12 @@ import PackageDescription
 
 let package = Package(
     name: "SwiftLogger",
+    platforms: [
+        .macOS(.v10_15),
+        .iOS(.v13),
+    ],
     products: [
+        .library(name: "SwiftLoggerClient", targets: ["SwiftLoggerClient"]),
         .executable(name: "SwiftLoggerServer", targets: ["SwiftLoggerServer"]),
         .library(name: "SwiftLogger", targets: ["SwiftLogger"]),
         .library(name: "SwiftLoggerCommon", targets: ["SwiftLoggerCommon"]),
@@ -22,6 +27,9 @@ let package = Package(
         .target(
             name: "SwiftLoggerCommon",
             dependencies: []),
+        .target(
+            name: "SwiftLoggerClient",
+            dependencies: ["SwiftLoggerCommon"]),
         .target(
             name: "SwiftLogger",
             dependencies: ["SwiftLoggerCommon", "Kitura"]),
