@@ -211,6 +211,7 @@ public class LoggerRouter {
         return LoggerRouter(dataDir: dataDir, logToFile: logToFile, logToUI: logToUI)
     }
     
+    #if !os(Linux)
     public static func networkLoggerRouter(name: String,
                                            passcode: String = LoggerData.defaultPasscode,
                                            delegate: PeerConnectionDelegate? = nil,
@@ -224,6 +225,7 @@ public class LoggerRouter {
                                    logToFile: logToFile,
                                    logToUI: logToUI)
     }
+    #endif
     
     @discardableResult func logToDelegates(loggerData: LoggerData) -> [Swift.Error] {
         var errors : [Swift.Error] = []

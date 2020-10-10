@@ -1,9 +1,6 @@
-/*
-See LICENSE folder for this sample’s licensing information.
-
-Abstract:
-Set up parameters for secure peer-to-peer connections and listeners.
-*/
+// Available only on Apple's platforms beginning at MacOS 10.15, ie swift 5
+#if !os(Linux)
+#if swift(>=5)
 
 import Network
 import CryptoKit
@@ -58,3 +55,6 @@ public extension NWParameters {
 		return dispatchData
 	}
 }
+
+#endif
+#endif
