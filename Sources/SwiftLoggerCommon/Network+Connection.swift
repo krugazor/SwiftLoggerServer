@@ -1,4 +1,4 @@
-/**
+/*
  MIT License
 
  Original idea/implementation
@@ -15,13 +15,19 @@
 import Foundation
 import Network
 
-public protocol PeerConnectionDelegate: class {
-    func connectionReady(_ c: PeerConnection)
-    func connectionFailed(_ c: PeerConnection)
-    func receivedMessage(_ c: PeerConnection, content: Data?, message: NWProtocolFramer.Message)
+/// Delegate for the logging connection
+public protocol PeerConnectionDelegate : AnyObject {
+    /// Connection is ready and active
+    func connectionReady(_ conn: PeerConnection)
+    /// Connection has failed
+    func connectionFailed(_ conn: PeerConnection)
+    /// Message to be decoded
+    func receivedMessage(_ conn: PeerConnection, content: Data?, message: NWProtocolFramer.Message)
+    /// Error with the Zeroconf/Bonjour stack
     func displayAdvertiseError(_ error: NWError)
 }
 
+/// Class for handling the actual connection, should not be used directly. It is public for the other frameworks' consumption
 public class PeerConnection : Equatable {
     public private(set) var id: UUID = UUID()
     public static func == (lhs: PeerConnection, rhs: PeerConnection) -> Bool {
@@ -110,7 +116,7 @@ public class PeerConnection : Equatable {
             return
         }
 
-        connection.receiveMessage { (content, context, isComplete, error) in
+        connection.receiveMessage { content, context, isComplete, error in
             // Extract your message type from the received context.
             if let message = context?.protocolMetadata(definition: LoggerProtocol.definition) as? NWProtocolFramer.Message {
                 self.delegate?.receivedMessage(self, content: content, message: message)
@@ -122,7 +128,6 @@ public class PeerConnection : Equatable {
         }
     }
 }
-
 
 #endif
 #endif

@@ -9,18 +9,22 @@
 //  Updated/Rewritted by Nicolas Zinovieff / 2020
 //
 
-
 import Foundation
 import Kitura
 import KituraNet
 import KituraContracts
 import SwiftLoggerCommon
 
+/// Error structure for file-specific messages
 public struct LoggerError : Swift.Error {
-    var message: String
+    var message: String /// Error message
 }
+
+/// Logger delegate which handles the actual writing or displaying of the messages
 public protocol LoggerRouterDelegate {
+    /// Whether or not this type writes to file (for filtering purposes). If false, UI display is assumed
     var writesToFile : Bool { get }
+    /// Writes or displays the log message
     func logMessage(_ message: LoggerData) throws
 }
 
@@ -32,7 +36,6 @@ func timestamp() -> (year: Int, month: Int, day: Int, timestamp: String) {
     let formatter = DateFormatter()
     formatter.timeStyle = .medium
     formatter.dateStyle = .medium
-    
     
     // calendar is used to create unique filename each day for logged data
     let calendar = Calendar.current
@@ -51,17 +54,22 @@ func truncateData(_ data: Data?, maxLength: Int = 20) -> String {
     guard let data = data else { return "NO DATA" }
     
     var output = ""
-    for i in 0..<min(maxLength, data.count) {
-        if output.count > 0 { output += " " }
-        output += String(format: "%02hhX", data[i] )
+    for idx in 0..<min(maxLength, data.count) {
+        if !output.isEmpty { output += " " }
+        output += String(format: "%02hhX", data[idx] )
     }
     
     return output
 }
 
+/// Standard (colorized) console logger
 public class ConsoleLogger : LoggerRouterDelegate {
+    /// Does not write to file
     public var writesToFile: Bool { return false }
     
+    /// Displays the (colorized) message on the console
+    /// - parameters:
+    ///   - loggerData: the data to display, truncates data if necessary
     public func logMessage(_ loggerData : LoggerData) throws {
         let (_, _, _, timeStamp) = timestamp()
         //
@@ -89,22 +97,30 @@ public class ConsoleLogger : LoggerRouterDelegate {
     }
 }
 
+/// Standard file writer logger (.log files)
 public class FileLogger : LoggerRouterDelegate {
+    /// Does write to file
     public var writesToFile: Bool { return true }
     // file  output
     private var outputDirectory : String
-
+    
+    /// Creates a new instance
+    /// - parameters:
+    ///   - dir: the directory to write log files to
     public init(_ dir: String) {
         outputDirectory = dir
     }
     
+    /// Appends message to the file(s)
+    /// - parameters:
+    ///   - loggerData: the data to append, writes data packets to a separate file
     public func logMessage(_ loggerData : LoggerData) throws {
         
         // get current application path and define fileURL
         let directory = outputDirectory
-                
+        
         // check if logFileTargetDirectory exists and create one if neccessary
-        if !FileManager.default.fileExists(atPath: "data") {
+        if !FileManager.default.fileExists(atPath: directory) {
             
             do {
                 try FileManager.default.createDirectory(atPath: directory, withIntermediateDirectories: true, attributes: nil)
@@ -113,7 +129,7 @@ public class FileLogger : LoggerRouterDelegate {
                 throw LoggerError(message: "Could not create directory \(directory)")
             }
         }
-
+        
         let (year, month, day, timeStamp) = timestamp()
         
         let text : String
@@ -128,7 +144,7 @@ public class FileLogger : LoggerRouterDelegate {
                 print(error)
                 throw LoggerError(message: "Could not write data to \(fileURL)")
             }
-            text = "file: \(datafilename)"
+            text = "file: \(fileURL.absoluteString)"
         } else {
             datafilename = ""
             text = "NO DATA"
@@ -146,7 +162,7 @@ public class FileLogger : LoggerRouterDelegate {
         let logData = logString.data(using: String.Encoding.utf8, allowLossyConversion: false)!
         
         let fileURL = URL(fileURLWithPath: directory).appendingPathComponent(filename, isDirectory: false)
-
+        
         // check file existance at target directory and store logger data line
         if FileManager.default.fileExists(atPath: fileURL.path) {
             do {
@@ -170,13 +186,17 @@ public class FileLogger : LoggerRouterDelegate {
     }
 }
 
+/// The standard Kitura router wrapper capable of accepting http connections
 public class LoggerRouter {
+    /// The Kitura router
     public private(set) var router : Router
+    /// All loggers connected to this instance
     public var logDelegates : [LoggerRouterDelegate] = []
     
+    /// Private default initializer
     init(dataDir: String? = nil, logToFile: Bool = false, logToUI: Bool = true) {
-        let _router = Router()
-        router = _router
+        let tmpRouter = Router()
+        router = tmpRouter
         
         if logToUI {
             logDelegates.append(ConsoleLogger())
@@ -194,30 +214,46 @@ public class LoggerRouter {
         
         defer {
             // SwiftLogger Backend Route (define handler)
-            _router.post("/logger", handler: loggerHandler)
+            tmpRouter.post("/logger", handler: loggerHandler)
             
-            _router.get("/") { req, res, next in
+            tmpRouter.get("/") { req, res, next in
                 res.status(.notFound)
                 next()
             }
         }
     }
     
-    public func addLogger(_ l: LoggerRouterDelegate) {
-        logDelegates.append(l)
+    /// Adds a new logger (conforming to `LoggerRouterDelegate`)
+    /// - parameters:
+    ///   - logd: the logger to use
+    public func addLogger(_ logd: LoggerRouterDelegate) {
+        logDelegates.append(logd)
     }
     
+    /// Starts a new HTTP endpoint for logging (not secure, anyone and anything can log to it)
+    /// - parameters:
+    ///   - dataDir: the directory to write log files to (if applicable)
+    ///   - logToFile: install the default file logger (default: false)
+    ///   - logToUI: install the default console logger (default: true)
+    /// - returns: The configured server to be used with Kitura
     public static func httpLoggerRouter(dataDir: String? = nil, logToFile: Bool = false, logToUI: Bool = true) -> LoggerRouter {
         return LoggerRouter(dataDir: dataDir, logToFile: logToFile, logToUI: logToUI)
     }
     
     #if !os(Linux)
+    /// Starts a new `Network.framework` endpoint for logging (kind of secure, traffic at least is encrypted)
+    /// Available only on Apple platforms, beginning at Swift 5 (macOS 10.15, iOS 
+    /// - parameters:
+    ///   - dataDir: the directory to write log files to (if applicable)
+    ///   - logToFile: install the default file logger (default: false)
+    ///   - logToUI: install the default console logger (default: true)
+    /// - returns: A configured and started server
     public static func networkLoggerRouter(name: String,
                                            passcode: String = LoggerData.defaultPasscode,
                                            delegate: PeerConnectionDelegate? = nil,
                                            dataDir: String? = nil,
                                            logToFile: Bool = false,
-                                           logToUI: Bool = true) -> LoggerRouter {
+                                           logToUI: Bool = true) -> NetworkLoggerRouter {
         return NetworkLoggerRouter(name: name,
                                    passcode: passcode,
                                    delegate: delegate,
@@ -268,14 +304,14 @@ public class LoggerRouter {
                 }
             }
         }
-
+        
         return errors
     }
     
     // logger handler is used to output data to either terminal or data file
-    func loggerHandler(loggerData: LoggerData, respondWith: @escaping (LoggerResult?, RequestError?) -> Void) -> Void {
+    func loggerHandler(loggerData: LoggerData, respondWith: @escaping (LoggerResult?, RequestError?) -> Void) {
         let errors : [Swift.Error] = logToDelegates(loggerData: loggerData)
-
+        
         let finalError = !errors.isEmpty
         if !finalError {
             let result = LoggerResult(status: .ok, message: "Data Logged Successfully")
@@ -285,9 +321,4 @@ public class LoggerRouter {
         }
         
     }
-    
-
-    
-    
 }
-

@@ -1,4 +1,4 @@
-/**
+/*
  MIT License
 
  Original idea/implementation
@@ -26,6 +26,7 @@ class SwiftLoggerClientTests: XCTestCase {
         DispatchQueue.global(qos: .background).async {
             Kitura.run()
         }
+        RunLoop.current.run(until: Date(timeIntervalSinceNow: 10))
         SwiftLogger.setupForHTTP(URL(string: "http://localhost:8080")!, appName: "Test")
         
         measure {

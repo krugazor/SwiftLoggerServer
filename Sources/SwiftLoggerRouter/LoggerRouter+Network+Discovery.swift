@@ -1,4 +1,4 @@
-/**
+/*
  MIT License
 
  Original idea/implementation
@@ -16,26 +16,23 @@ import Foundation
 import Network
 import SwiftLoggerCommon
 
+/// `Network.framework` logger server
 public class NetworkLoggerRouter : LoggerRouter, PeerConnectionDelegate {
-
-    weak var delegate: PeerConnectionDelegate?
-    var listener: NWListener?
-    public var name: String {
+    public weak var delegate: PeerConnectionDelegate? /// If we need to react to connection events (UI for example)
+    var listener: NWListener? /// The listener
+    public var name: String { /// The name of the service (used if the app is looking for a specific server)
         didSet {
             self.resetName(name)
         }
     }
-    let passcode: String
-    
-    deinit {
-        print("got scrapped")
-    }
+    let passcode: String /// The passcode used to encrypt the communication
     
     private var networkListener : NWListener?
     private var networkConnections : [PeerConnection] = []
 
-    // Create a listener with a name to advertise, a passcode for authentication,
-    // and a delegate to handle inbound connections.
+    /// Create a listener with a name to advertise, a passcode for authentication,
+    /// and a delegate to handle inbound connections.
+    /// Private initializer for internal use
     init(name: String,
          passcode: String = LoggerData.defaultPasscode,
          delegate: PeerConnectionDelegate? = nil,
@@ -51,8 +48,8 @@ public class NetworkLoggerRouter : LoggerRouter, PeerConnectionDelegate {
         startListening()
     }
 
-    // Start listening and advertising.
-    func startListening() {
+    /// Start listening and advertising.
+    public func startListening() {
         do {
             // Create the listener object.
             let listener = try NWListener(using: NWParameters(passcode: passcode))
@@ -120,7 +117,9 @@ public class NetworkLoggerRouter : LoggerRouter, PeerConnectionDelegate {
         }
     }
 
-    // If the user changes their name, update the advertised name.
+    /// If the user changes their name, update the advertised name.
+    /// - parameters:
+    ///   - name: the new name to use
     func resetName(_ name: String) {
         self.name = name
         if let listener = listener {
@@ -130,8 +129,8 @@ public class NetworkLoggerRouter : LoggerRouter, PeerConnectionDelegate {
     }
 
     // MARK: -
-    public func connectionReady(_ c: PeerConnection) {
-        delegate?.connectionReady(c)
+    public func connectionReady(_ conn: PeerConnection) {
+        delegate?.connectionReady(conn)
         
         if delegate == nil {
             logToDelegates(loggerData: LoggerData(appName: "LoggerServer",
@@ -140,27 +139,27 @@ public class NetworkLoggerRouter : LoggerRouter, PeerConnectionDelegate {
                                                   sourceFile: URL(fileURLWithPath: #file).lastPathComponent,
                                                   lineNumber: #line,
                                                   function: #function,
-                                                  logText: "Connection ready with \(c.id)"))
+                                                  logText: "Connection ready with \(conn.id)"))
         }
     }
     
-    public func connectionFailed(_ c: PeerConnection) {
-        networkConnections.removeAll(where: { $0 == c })
-        delegate?.connectionReady(c)
+    public func connectionFailed(_ conn: PeerConnection) {
+        networkConnections.removeAll(where: { $0 == conn })
+        delegate?.connectionReady(conn)
  
         if delegate == nil {
             logToDelegates(loggerData: LoggerData(appName: "LoggerServer",
-                                                  logType: .ERROR,
+                                                  logType: .WARNING,
                                                   logTarget: .both,
                                                   sourceFile: URL(fileURLWithPath: #file).lastPathComponent,
                                                   lineNumber: #line,
                                                   function: #function,
-                                                  logText: "Connection failed with \(c.id)"))
+                                                  logText: "Connection failed with \(conn.id), will retry"))
         }
     }
     
-    public func receivedMessage(_ c: PeerConnection, content: Data?, message: NWProtocolFramer.Message) {
-        delegate?.receivedMessage(c, content: content, message: message)
+    public func receivedMessage(_ conn: PeerConnection, content: Data?, message: NWProtocolFramer.Message) {
+        delegate?.receivedMessage(conn, content: content, message: message)
         if delegate == nil {
             if let content = content, let log = try? JSONDecoder().decode(LoggerData.self, from: content) {
                 logToDelegates(loggerData: log)
