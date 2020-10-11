@@ -1,3 +1,13 @@
+/**
+ MIT License
+
+ Original idea/implementation
+ Copyright (c) 2017 Mladen_K
+
+ Adapted and rewritten
+ Copyright (c) 2020 Zino
+ */
+
 import Foundation
 import SwiftLoggerCommon
 #if os(Linux)
@@ -10,6 +20,9 @@ public class SwiftLogger {
         _sharedInstance = SwiftLogger(url, appName: appName)
     }
     
+    public static func debug(source: String = #file, line: Int = #line, function: String = #function, message: String? = nil, target: LoggerData.LoggerTarget = .both) {
+        d(source: source, line: line, function: function, message: message, target: target)
+    }
     public static func d(source: String = #file, line: Int = #line, function: String = #function, message: String? = nil, target: LoggerData.LoggerTarget = .both) {
         guard let message = message, let instance = _sharedInstance else { return }
         let log = LoggerData(appName: instance.appName,
@@ -26,6 +39,9 @@ public class SwiftLogger {
         }
     }
     
+    public static func info(source: String = #file, line: Int = #line, function: String = #function, message: String? = nil, target: LoggerData.LoggerTarget = .both) {
+        i(source: source, line: line, function: function, message: message, target: target)
+    }
     public static func i(source: String = #file, line: Int = #line, function: String = #function, message: String? = nil, target: LoggerData.LoggerTarget = .both) {
         guard let message = message, let instance = _sharedInstance else { return }
         let log = LoggerData(appName: instance.appName,
@@ -42,6 +58,9 @@ public class SwiftLogger {
         }
     }
     
+    public static func warning(source: String = #file, line: Int = #line, function: String = #function, message: String? = nil, target: LoggerData.LoggerTarget = .both) {
+        w(source: source, line: line, function: function, message: message, target: target)
+    }
     public static func w(source: String = #file, line: Int = #line, function: String = #function, message: String? = nil, target: LoggerData.LoggerTarget = .both) {
         guard let message = message, let instance = _sharedInstance else { return }
         let log = LoggerData(appName: instance.appName,
@@ -58,6 +77,9 @@ public class SwiftLogger {
         }
     }
     
+    public static func error(source: String = #file, line: Int = #line, function: String = #function, message: String? = nil, target: LoggerData.LoggerTarget = .both) {
+        e(source: source, line: line, function: function, message: message, target: target)
+    }
     public static func e(source: String = #file, line: Int = #line, function: String = #function, message: String? = nil, target: LoggerData.LoggerTarget = .both) {
         guard let message = message, let instance = _sharedInstance else { return }
         let log = LoggerData(appName: instance.appName,
