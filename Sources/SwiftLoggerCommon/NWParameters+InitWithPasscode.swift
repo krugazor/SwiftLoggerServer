@@ -1,3 +1,13 @@
+/**
+ MIT License
+
+ Original idea/implementation
+ Copyright (c) 2017 Mladen_K
+
+ Adapted and rewritten
+ Copyright (c) 2020 Zino
+ */
+
 // Available only on Apple's platforms beginning at MacOS 10.15, ie swift 5
 #if !os(Linux)
 #if swift(>=5)
@@ -20,7 +30,7 @@ public extension NWParameters {
 		// Enable using a peer-to-peer link.
 		self.includePeerToPeer = true
 
-		// Add your custom game protocol to support game messages.
+		// Add your custom protocol to support messages.
 		let loggerOptions = NWProtocolFramer.Options(definition: LoggerProtocol.definition)
 		self.defaultProtocolStack.applicationProtocols.insert(loggerOptions, at: 0)
 	}

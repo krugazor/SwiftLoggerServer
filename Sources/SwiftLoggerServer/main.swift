@@ -1,11 +1,18 @@
-//
-//  main.swift
+/**
+ MIT License
+
+ Original idea/implementation
+ Copyright (c) 2017 Mladen_K
+
+ Adapted and rewritten
+ Copyright (c) 2020 Zino
+ */
 
 import Foundation
-import SwiftLogger
 import Kitura
 import ArgumentParser
 import SwiftLoggerCommon
+import SwiftLoggerRouter
 
 let group = DispatchGroup()
 
@@ -16,10 +23,10 @@ struct SwiftLoggerServer : ParsableCommand {
     @Option(name: .shortAndLong, help: "The path of the directory to write logs to (defaults to ./data)")
     var dataDir: String?
     
-    @Option(name: .shortAndLong, help: "Writes log to disk")
+    @Flag(name: .shortAndLong, inversion: .prefixedNo, help: "Writes log to disk")
     var fileLogging: Bool = false
     
-    @Option(name: .shortAndLong, help: "Writes log to UI")
+    @Flag(name: .shortAndLong, inversion: .prefixedNo, help: "Writes log to UI")
     var uiLogging: Bool = true
     
     @Argument(help: "The network mode to run (http|network). Please be aware that network mode is only available on Apple platforms")
@@ -38,7 +45,7 @@ struct SwiftLoggerServer : ParsableCommand {
         
         switch chosen {
         case .http:
-            let router = LoggerRouter.httpLoggerRouter(dataDir: dataDir)
+            let router = LoggerRouter.httpLoggerRouter(dataDir: dataDir, logToFile: fileLogging, logToUI: uiLogging)
             
             // Add an HTTP server and connect it to the router
             Kitura.addHTTPServer(onPort: (port ?? 8080), with: router.router)
@@ -50,7 +57,7 @@ struct SwiftLoggerServer : ParsableCommand {
             Kitura.run()
         case .network:
             #if !os(Linux)
-            let router = LoggerRouter.networkLoggerRouter(name: "SwiftLogger Server",
+            let _ = LoggerRouter.networkLoggerRouter(name: "SwiftLogger Server",
                                                           passcode: LoggerData.defaultPasscode,
                                                           delegate: nil,
                                                           dataDir: dataDir,

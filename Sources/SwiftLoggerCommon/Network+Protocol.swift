@@ -1,3 +1,13 @@
+/**
+ MIT License
+
+ Original idea/implementation
+ Copyright (c) 2017 Mladen_K
+
+ Adapted and rewritten
+ Copyright (c) 2020 Zino
+ */
+
 // Available only on Apple's platforms beginning at MacOS 10.15, ie swift 5
 #if !os(Linux)
 #if swift(>=5)
@@ -12,7 +22,6 @@ enum LoggerProtocolMessageType: UInt32 {
 }
 public class LoggerProtocol: NWProtocolFramerImplementation {
 
-    // Create a global definition of your game protocol to add to connections.
     public static let definition = NWProtocolFramer.Definition(implementation: LoggerProtocol.self)
 
     // Set a name for your protocol for use in debugging.

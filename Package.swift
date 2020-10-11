@@ -10,10 +10,10 @@ let package = Package(
         .iOS(.v13),
     ],
     products: [
-        .library(name: "SwiftLoggerClient", targets: ["SwiftLoggerClient"]),
         .executable(name: "SwiftLoggerServer", targets: ["SwiftLoggerServer"]),
-        .library(name: "SwiftLogger", targets: ["SwiftLogger"]),
+        .library(name: "SwiftLoggerRouter", targets: ["SwiftLoggerRouter"]),
         .library(name: "SwiftLoggerCommon", targets: ["SwiftLoggerCommon"]),
+        .library(name: "SwiftLoggerClient", targets: ["SwiftLoggerClient"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -27,13 +27,17 @@ let package = Package(
         .target(
             name: "SwiftLoggerCommon",
             dependencies: []),
+         .target(
+            name: "SwiftLoggerRouter",
+            dependencies: ["SwiftLoggerCommon", "Kitura"]),
+        .target(name: "SwiftLoggerServer",
+                dependencies: ["SwiftLoggerRouter", .product(name: "ArgumentParser", package: "swift-argument-parser")]),
         .target(
             name: "SwiftLoggerClient",
             dependencies: ["SwiftLoggerCommon"]),
-        .target(
-            name: "SwiftLogger",
-            dependencies: ["SwiftLoggerCommon", "Kitura"]),
-        .target(name: "SwiftLoggerServer",
-                dependencies: ["SwiftLogger", .product(name: "ArgumentParser", package: "swift-argument-parser")])
+        .testTarget(
+            name: "SwiftLoggerClientTests",
+            dependencies: ["SwiftLoggerClient", "SwiftLoggerRouter"]),
+
     ]
 )
