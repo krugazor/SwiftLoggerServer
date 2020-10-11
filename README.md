@@ -171,9 +171,13 @@ SwiftLogger.i(message: "This is an information")
 SwiftLogger.d(message: "This is a debug message")
 SwiftLogger.w(message: "This is a warning")
 SwiftLogger.e(message: "This is an error")
+SwiftLogger.i(data: somedata, fileExtension: "png")
+SwiftLogger.d(data: somedata, fileExtension: "json")
+SwiftLogger.w(data: somedata, fileExtension: "jpg")
+SwiftLogger.e(data: somedata) // will use .bin as extension
 ```
 
-More information regarding the function parameters that are set by default can be found [in the documentation](Docs/SwiftLoggerClient/classes/SwiftLogger.md)
+More information regarding the function parameters that are set by default can be found [in the documentation for text mesages](Docs/SwiftLoggerClient/classes/SwiftLogger.md) or [in the documentation for data messages](Docs/SwiftLoggerClient/extensions/SwiftLogger.md)
 
 ## Prerequisites
 
