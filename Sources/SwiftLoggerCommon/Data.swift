@@ -53,6 +53,8 @@ public struct LoggerData : Codable {
     public let logData: Data?
     /// File extension to use when writing that data to disk
     public let logDataExt: String?
+    /// Date of the log, defaults the date of creation
+    public var logDate: Date = Date()
     
     /// Text message initializer
     /// - parameters:
