@@ -41,7 +41,7 @@ class SwiftLoggerClientTests: XCTestCase {
     func testNetwork() {
         let router = LoggerRouter.networkLoggerRouter(name: "SwiftLogger Server")
         
-        SwiftLogger.setupForNetwork(passcode: LoggerData.defaultPasscode, appName: "SwiftLogger Server")
+        SwiftLogger.setupForNetwork(passcode: LoggerData.defaultPasscode, appName: "SwiftLogger Server", useSpecificServer: false)
         RunLoop.current.run(until: Date(timeIntervalSinceNow: 10))
         print("trying to connect")
         measure {
