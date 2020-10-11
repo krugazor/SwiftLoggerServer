@@ -101,6 +101,28 @@ class SwiftLoggerClientTests: XCTestCase {
         }
         RunLoop.current.run(until: Date(timeIntervalSinceNow: 10))
     }
+
+    func testNetworkUI() {
+        // could not find a way to load an image from within the test architecture
+        guard let image = FileManager.default.contents(atPath: "/tmp/screenshot-terminal.png") else {
+            XCTFail("Image could not be loaded")
+            return
+        }
+        SwiftLogger.setupForNetwork(passcode: LoggerData.defaultPasscode, appName: "SwiftLoggerServer", useSpecificServer: false)
+        RunLoop.current.run(until: Date(timeIntervalSinceNow: 10))
+        print("trying to connect")
+        measure {
+            SwiftLogger.i(message: "This is an information")
+            SwiftLogger.d(message: "This is a debug message")
+            SwiftLogger.w(message: "This is a warning")
+            SwiftLogger.e(message: "This is an error")
+            SwiftLogger.i(data: image, fileExtension: "png")
+            SwiftLogger.d(data: image, fileExtension: "png")
+            SwiftLogger.w(data: image, fileExtension: "png")
+            SwiftLogger.e(data: image, fileExtension: "png")
+        }
+        RunLoop.current.run(until: Date(timeIntervalSinceNow: 10))
+    }
 #endif
     
     #if !os(Linux)
