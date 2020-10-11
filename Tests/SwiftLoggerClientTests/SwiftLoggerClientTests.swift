@@ -1,4 +1,4 @@
-/**
+/*
  MIT License
 
  Original idea/implementation
@@ -26,6 +26,7 @@ class SwiftLoggerClientTests: XCTestCase {
         DispatchQueue.global(qos: .background).async {
             Kitura.run()
         }
+        RunLoop.current.run(until: Date(timeIntervalSinceNow: 10))
         SwiftLogger.setupForHTTP(URL(string: "http://localhost:8080")!, appName: "Test")
         
         measure {
@@ -40,7 +41,7 @@ class SwiftLoggerClientTests: XCTestCase {
     func testNetwork() {
         let router = LoggerRouter.networkLoggerRouter(name: "SwiftLogger Server")
         
-        SwiftLogger.setupForNetwork(passcode: LoggerData.defaultPasscode, appName: "SwiftLogger Server")
+        SwiftLogger.setupForNetwork(passcode: LoggerData.defaultPasscode, appName: "SwiftLogger Server", useSpecificServer: false)
         RunLoop.current.run(until: Date(timeIntervalSinceNow: 10))
         print("trying to connect")
         measure {

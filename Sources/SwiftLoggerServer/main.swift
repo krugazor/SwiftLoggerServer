@@ -1,4 +1,4 @@
-/**
+/*
  MIT License
 
  Original idea/implementation
@@ -57,7 +57,7 @@ struct SwiftLoggerServer : ParsableCommand {
             Kitura.run()
         case .network:
             #if !os(Linux)
-            let _ = LoggerRouter.networkLoggerRouter(name: "SwiftLogger Server",
+            _ = LoggerRouter.networkLoggerRouter(name: "SwiftLogger Server",
                                                           passcode: LoggerData.defaultPasscode,
                                                           delegate: nil,
                                                           dataDir: dataDir,

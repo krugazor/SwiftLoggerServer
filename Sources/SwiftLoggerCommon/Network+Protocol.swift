@@ -1,4 +1,4 @@
-/**
+/*
  MIT License
 
  Original idea/implementation
@@ -56,7 +56,7 @@ public class LoggerProtocol: NWProtocolFramerImplementation {
             var tempHeader: LogMessageHeader? = nil
             let headerSize = LogMessageHeader.encodedSize
             let parsed = framer.parseInput(minimumIncompleteLength: headerSize,
-                                           maximumLength: headerSize) { (buffer, isComplete) -> Int in
+                                           maximumLength: headerSize) { buffer, isComplete -> Int in
                 guard let buffer = buffer else {
                     return 0
                 }
