@@ -1,5 +1,9 @@
 # Change Log
 
+### 1.0.2 - 2020.10.11
+
+- stupid nil testing is stupid: data wasn't passed to the loggers if a delegate was present
+
 ### 1.0.1 - 2020.10.11
 
 - needed a date for various purposes (mostly UI related, but some future endeavors as well)
