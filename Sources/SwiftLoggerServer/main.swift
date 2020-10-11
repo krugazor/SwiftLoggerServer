@@ -57,7 +57,7 @@ struct SwiftLoggerServer : ParsableCommand {
             Kitura.run()
         case .network:
             #if !os(Linux)
-            _ = LoggerRouter.networkLoggerRouter(name: "SwiftLogger Server",
+            _ = LoggerRouter.networkLoggerRouter(name: "SwiftLoggerServer",
                                                           passcode: LoggerData.defaultPasscode,
                                                           delegate: nil,
                                                           dataDir: dataDir,

@@ -101,7 +101,7 @@ public struct LoggerData : Codable {
         lineNumber lin: Int,
         function fun: String,
         logData data: Data,
-        dataExtension ext: String
+        dataExtension ext: String?
     ) {
         appName = apn
         logType = lty

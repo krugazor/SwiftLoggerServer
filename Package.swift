@@ -38,7 +38,7 @@ let package = Package(
             dependencies: ["SwiftLoggerCommon"]),
         .testTarget(
             name: "SwiftLoggerClientTests",
-            dependencies: ["SwiftLoggerClient", "SwiftLoggerRouter"]),
+            dependencies: ["SwiftLoggerClient", "SwiftLoggerRouter"], resources: [.copy("../screenshot-terminal.png")]),
 
     ]
 )

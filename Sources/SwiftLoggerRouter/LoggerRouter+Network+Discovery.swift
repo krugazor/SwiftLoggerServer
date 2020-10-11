@@ -99,8 +99,7 @@ public class NetworkLoggerRouter : LoggerRouter, PeerConnectionDelegate {
             }
 
             listener.newConnectionHandler = { newConnection in
-                print("incoming connection")
-                self.networkConnections.append(PeerConnection(connection: newConnection, delegate: self))
+                 self.networkConnections.append(PeerConnection(connection: newConnection, delegate: self))
             }
 
             // Start listening, and request updates on the main queue.

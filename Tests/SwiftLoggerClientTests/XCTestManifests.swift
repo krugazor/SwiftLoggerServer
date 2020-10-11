@@ -7,6 +7,8 @@ extension SwiftLoggerClientTests {
     // to regenerate.
     static let __allTests__SwiftLoggerClientTests = [
         ("testHTTP", testHTTP),
+        ("testHTTPData", testHTTPData),
+        ("testNetwork", testNetwork),
     ]
 }
 
