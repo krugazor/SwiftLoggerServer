@@ -23,6 +23,10 @@ class NetworkSwiftLogger : SwiftLogger {
     var connection: PeerConnection?
     var connectToSpecificServer : Bool = false
     
+    deinit {
+        connection?.cancel()
+    }
+    
     // Create a browsing object with a delegate.
     init(name snm: String, passcode pass: String?, specificServer: Bool = false) {
         name = snm
@@ -119,6 +123,10 @@ extension NetworkSwiftLogger : PeerConnectionDelegate {
     
     func connectionFailed(_ conn: PeerConnection) {
         // this space for rent
+        conn.cancel()
+        if conn == connection {
+            connection = nil
+        }
     }
     
     func receivedMessage(_ conn: PeerConnection, content: Data?, message: NWProtocolFramer.Message) {
