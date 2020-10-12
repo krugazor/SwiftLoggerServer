@@ -121,7 +121,8 @@ public class PeerConnection : Equatable {
             if let message = context?.protocolMetadata(definition: LoggerProtocol.definition) as? NWProtocolFramer.Message {
                 self.delegate?.receivedMessage(self, content: content, message: message)
             }
-            if error == nil {
+            let finalMessage = context?.isFinal ?? false
+            if !finalMessage && error == nil {
                 // Continue to receive more messages until you receive and error.
                 self.receiveNextMessage()
             }
