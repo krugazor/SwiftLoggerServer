@@ -27,7 +27,6 @@ public class NetworkLoggerRouter : LoggerRouter, PeerConnectionDelegate {
     }
     let passcode: String /// The passcode used to encrypt the communication
     
-    private var networkListener : NWListener?
     private var networkConnections : [PeerConnection] = []
     
     /// Create a listener with a name to advertise, a passcode for authentication,
@@ -46,6 +45,10 @@ public class NetworkLoggerRouter : LoggerRouter, PeerConnectionDelegate {
         super.init(dataDir: dataDir, logToFile: logToFile, logToUI: logToUI)
         
         startListening()
+    }
+    
+    deinit {
+        cleanup()
     }
     
     /// Start listening and advertising.
@@ -92,7 +95,7 @@ public class NetworkLoggerRouter : LoggerRouter, PeerConnectionDelegate {
                         listener.cancel()
                     }
                 case .cancelled:
-                    self.networkListener = nil
+                    self.listener = nil
                 default:
                     break
                 }
@@ -114,6 +117,13 @@ public class NetworkLoggerRouter : LoggerRouter, PeerConnectionDelegate {
                                                        logText: "Failed to create listener\n\(error.localizedDescription)"))
             abort()
         }
+    }
+    
+    /// Destructor-like function for when deinit isn't called
+    override open func cleanup() {
+        self.listener?.cancel()
+        self.listener = nil
+        super.cleanup()
     }
     
     /// If the user changes their name, update the advertised name.

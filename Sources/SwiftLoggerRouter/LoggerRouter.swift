@@ -223,6 +223,15 @@ public class LoggerRouter {
         }
     }
     
+    /// Destructor-like function for when deinit isn't called
+    open func cleanup() {
+        logDelegates.removeAll()
+    }
+    
+    deinit {
+        cleanup()
+    }
+    
     /// Adds a new logger (conforming to `LoggerRouterDelegate`)
     /// - parameters:
     ///   - logd: the logger to use
