@@ -111,6 +111,7 @@ class SwiftLoggerClientTests: XCTestCase {
         SwiftLogger.setupForNetwork(passcode: LoggerData.defaultPasscode, appName: "SwiftLoggerServer", useSpecificServer: false)
         RunLoop.current.run(until: Date(timeIntervalSinceNow: 10))
         print("trying to connect")
+        let data = "Some Random Gibberish Data For Data Cells. Some Random Gibberish Data For Data Cells. Some Random Gibberish Data For Data Cells. Some Random Gibberish Data For Data Cells.".data(using: .utf8)!
         measure {
             SwiftLogger.i(message: "This is an information")
             SwiftLogger.d(message: "This is a debug message")
@@ -120,6 +121,10 @@ class SwiftLoggerClientTests: XCTestCase {
             SwiftLogger.d(data: image, fileExtension: "png")
             SwiftLogger.w(data: image, fileExtension: "png")
             SwiftLogger.e(data: image, fileExtension: "png")
+            SwiftLogger.i(data: data, fileExtension: nil)
+            SwiftLogger.d(data: data, fileExtension: nil)
+            SwiftLogger.w(data: data, fileExtension: nil)
+            SwiftLogger.e(data: data, fileExtension: nil)
         }
         RunLoop.current.run(until: Date(timeIntervalSinceNow: 10))
     }
