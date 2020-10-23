@@ -22,7 +22,7 @@ public extension LoggerRouter {
     ///   - logToUI: install the default console logger (default: true)
     /// - returns: The configured server to be used with Kitura
     static func httpLoggerRouter(dataDir: String? = nil, logToFile: Bool = false, logToUI: Bool = true) -> LoggerRouter {
-        return LoggerRouter(dataDir: dataDir, logToFile: logToFile, logToUI: logToUI)
+        return KituraLoggerRouter(dataDir: dataDir, logToFile: logToFile, logToUI: logToUI)
     }
     
     #if !os(Linux)
