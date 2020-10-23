@@ -15,6 +15,7 @@
 import Foundation
 import Network
 import SwiftLoggerCommon
+import SwiftLoggerRouterBase
 
 /// `Network.framework` logger server
 public class NetworkLoggerRouter : LoggerRouter, PeerConnectionDelegate {
@@ -32,7 +33,7 @@ public class NetworkLoggerRouter : LoggerRouter, PeerConnectionDelegate {
     /// Create a listener with a name to advertise, a passcode for authentication,
     /// and a delegate to handle inbound connections.
     /// Private initializer for internal use
-    init(name: String,
+    public init(name: String,
          passcode: String = LoggerData.defaultPasscode,
          delegate: PeerConnectionDelegate? = nil,
          dataDir: String? = nil,

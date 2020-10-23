@@ -13,6 +13,7 @@ import Kitura
 import ArgumentParser
 import SwiftLoggerCommon
 import SwiftLoggerRouter
+import SwiftLoggerRouterKitura
 
 let group = DispatchGroup()
 
@@ -48,7 +49,12 @@ struct SwiftLoggerServer : ParsableCommand {
             let router = LoggerRouter.httpLoggerRouter(dataDir: dataDir, logToFile: fileLogging, logToUI: uiLogging)
             
             // Add an HTTP server and connect it to the router
-            Kitura.addHTTPServer(onPort: (port ?? 8080), with: router.router)
+            if let router = (router as? KituraLoggerRouter)?.router {
+                Kitura.addHTTPServer(onPort: (port ?? 8080), with: router)
+            } else {
+                print("no router configured")
+                SwiftLoggerServer.exit()
+            }
             
             print("Started listening on port \(port ?? 8080)")
             print("***")
@@ -93,8 +99,13 @@ struct SwiftLoggerServerLinux : ParsableCommand {
         let router = LoggerRouter.httpLoggerRouter(dataDir: dataDir)
         
         // Add an HTTP server and connect it to the router
-        Kitura.addHTTPServer(onPort: (port ?? 8080), with: router.router)
-        
+        if let router = (router as? KituraLoggerRouter)?.router {
+            Kitura.addHTTPServer(onPort: (port ?? 8080), with: router)
+        } else {
+            print("no router configured")
+            SwiftLoggerServer.exit()
+        }
+
         print("Started listening on port \(port ?? 8080)")
         print("***")
         

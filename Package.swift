@@ -28,9 +28,18 @@ let package = Package(
         .target(
             name: "SwiftLoggerCommon",
             dependencies: []),
-         .target(
-            name: "SwiftLoggerRouter",
-            dependencies: ["SwiftLoggerCommon", "Kitura"]),
+        .target(
+           name: "SwiftLoggerRouterBase",
+           dependencies: ["SwiftLoggerCommon"]),
+        .target(
+           name: "SwiftLoggerRouterKitura",
+           dependencies: ["SwiftLoggerRouterBase", "Kitura"]),
+        .target(
+           name: "SwiftLoggerRouterNetwork",
+           dependencies: ["SwiftLoggerRouterBase"]),
+        .target(
+           name: "SwiftLoggerRouter",
+           dependencies: ["SwiftLoggerRouterKitura", "SwiftLoggerRouterNetwork"]),
         .target(name: "SwiftLoggerServer",
                 dependencies: ["SwiftLoggerRouter", .product(name: "ArgumentParser", package: "swift-argument-parser")]),
         .target(
