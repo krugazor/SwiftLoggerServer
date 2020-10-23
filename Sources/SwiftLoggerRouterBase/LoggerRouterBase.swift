@@ -10,9 +10,6 @@
 //
 
 import Foundation
-import Kitura
-import KituraNet
-import KituraContracts
 import SwiftLoggerCommon
 
 /// Error structure for file-specific messages
@@ -187,17 +184,12 @@ public class FileLogger : LoggerRouterDelegate {
 }
 
 /// The standard Kitura router wrapper capable of accepting http connections
-public class LoggerRouter {
-    /// The Kitura router
-    public private(set) var router : Router
+open class LoggerRouter {
     /// All loggers connected to this instance
     public var logDelegates : [LoggerRouterDelegate] = []
     
-    /// Private default initializer
-    init(dataDir: String? = nil, logToFile: Bool = false, logToUI: Bool = true) {
-        let tmpRouter = Router()
-        router = tmpRouter
-        
+    /// Default initializer
+    public init(dataDir: String? = nil, logToFile: Bool = false, logToUI: Bool = true) {
         if logToUI {
             logDelegates.append(ConsoleLogger())
         }
@@ -210,16 +202,6 @@ public class LoggerRouter {
                 outputDirectory = FileManager.default.currentDirectoryPath + "/data"
             }
             logDelegates.append(FileLogger(outputDirectory))
-        }
-        
-        defer {
-            // SwiftLogger Backend Route (define handler)
-            tmpRouter.post("/logger", handler: loggerHandler)
-            
-            tmpRouter.get("/") { req, res, next in
-                res.status(.notFound)
-                next()
-            }
         }
     }
     
@@ -238,41 +220,8 @@ public class LoggerRouter {
     public func addLogger(_ logd: LoggerRouterDelegate) {
         logDelegates.append(logd)
     }
-    
-    /// Starts a new HTTP endpoint for logging (not secure, anyone and anything can log to it)
-    /// - parameters:
-    ///   - dataDir: the directory to write log files to (if applicable)
-    ///   - logToFile: install the default file logger (default: false)
-    ///   - logToUI: install the default console logger (default: true)
-    /// - returns: The configured server to be used with Kitura
-    public static func httpLoggerRouter(dataDir: String? = nil, logToFile: Bool = false, logToUI: Bool = true) -> LoggerRouter {
-        return LoggerRouter(dataDir: dataDir, logToFile: logToFile, logToUI: logToUI)
-    }
-    
-    #if !os(Linux)
-    /// Starts a new `Network.framework` endpoint for logging (kind of secure, traffic at least is encrypted)
-    /// Available only on Apple platforms, beginning at Swift 5 (macOS 10.15, iOS 
-    /// - parameters:
-    ///   - dataDir: the directory to write log files to (if applicable)
-    ///   - logToFile: install the default file logger (default: false)
-    ///   - logToUI: install the default console logger (default: true)
-    /// - returns: A configured and started server
-    public static func networkLoggerRouter(name: String,
-                                           passcode: String = LoggerData.defaultPasscode,
-                                           delegate: PeerConnectionDelegate? = nil,
-                                           dataDir: String? = nil,
-                                           logToFile: Bool = false,
-                                           logToUI: Bool = true) -> NetworkLoggerRouter {
-        return NetworkLoggerRouter(name: name,
-                                   passcode: passcode,
-                                   delegate: delegate,
-                                   dataDir: dataDir,
-                                   logToFile: logToFile,
-                                   logToUI: logToUI)
-    }
-    #endif
-    
-    @discardableResult func logToDelegates(loggerData: LoggerData) -> [Swift.Error] {
+        
+    @discardableResult public func logToDelegates(loggerData: LoggerData) -> [Swift.Error] {
         var errors : [Swift.Error] = []
         
         // output target "file" or "both" has to be explicitly stated, othewise, terminal output will be implemented
@@ -315,19 +264,5 @@ public class LoggerRouter {
         }
         
         return errors
-    }
-    
-    // logger handler is used to output data to either terminal or data file
-    func loggerHandler(loggerData: LoggerData, respondWith: @escaping (LoggerResult?, RequestError?) -> Void) {
-        let errors : [Swift.Error] = logToDelegates(loggerData: loggerData)
-        
-        let finalError = !errors.isEmpty
-        if !finalError {
-            let result = LoggerResult(status: .ok, message: "Data Logged Successfully")
-            respondWith(result, nil)
-        } else {
-            respondWith(nil, .internalServerError)
-        }
-        
     }
 }

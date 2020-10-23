@@ -17,11 +17,17 @@ import Dispatch
 import SwiftLoggerCommon
 @testable import SwiftLoggerClient
 @testable import SwiftLoggerRouter
+@testable import SwiftLoggerRouterKitura
 
 class SwiftLoggerClientTests: XCTestCase {
     func testHTTP() {
         let router = LoggerRouter.httpLoggerRouter(logToFile: false, logToUI: true)
-        Kitura.addHTTPServer(onPort: 8080, with: router.router)
+        if let krouter = (router as? KituraLoggerRouter)?.router {
+            Kitura.addHTTPServer(onPort: 8080, with: krouter)
+        } else {
+            XCTFail()
+            return
+        }
         
         // start the Kitura runloop (this call never returns)
         DispatchQueue.global(qos: .background).async {
@@ -47,8 +53,13 @@ class SwiftLoggerClientTests: XCTestCase {
             return
         }
         let router = LoggerRouter.httpLoggerRouter(logToFile: true, logToUI: true)
-        Kitura.addHTTPServer(onPort: 8080, with: router.router)
-        
+        if let krouter = (router as? KituraLoggerRouter)?.router {
+            Kitura.addHTTPServer(onPort: 8080, with: krouter)
+        } else {
+            XCTFail()
+            return
+        }
+ 
         // start the Kitura runloop (this call never returns)
         DispatchQueue.global(qos: .background).async {
             Kitura.run()
