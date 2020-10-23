@@ -13,6 +13,7 @@ let package = Package(
     products: [
         .executable(name: "SwiftLoggerServer", targets: ["SwiftLoggerServer"]),
         .library(name: "SwiftLoggerRouter", targets: ["SwiftLoggerRouter"]),
+        .library(name: "SwiftLoggerRouterNetwork", targets: ["SwiftLoggerRouterNetwork"]),
         .library(name: "SwiftLoggerCommon", targets: ["SwiftLoggerCommon"]),
         .library(name: "SwiftLoggerClient", targets: ["SwiftLoggerClient"]),
     ],
