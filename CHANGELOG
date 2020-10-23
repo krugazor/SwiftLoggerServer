@@ -1,5 +1,17 @@
 # Change Log
 
+### 1.1.0 - 2020.10.23
+
+- Split the implementations to allow for partial loading (should not change the visible interface from SwiftLogger)
+
+### 1.0.4 - 2020.10.17
+
+- BUGFIX: deinit/release issues with Network implementation that doesn't stop the broadcast correctly
+
+### 1.0.3 - 2020.10.11
+
+- BUGFIX: weird hanging up procedure in Network.framework
+
 ### 1.0.2 - 2020.10.11
 
 - stupid nil testing is stupid: data wasn't passed to the loggers if a delegate was present
