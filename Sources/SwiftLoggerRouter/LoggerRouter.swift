@@ -14,6 +14,8 @@ import SwiftLoggerRouterKitura
 import SwiftLoggerRouterNetwork
 
 public typealias LoggerRouter = SwiftLoggerRouterBase.LoggerRouter
+public typealias LoggerRouterDelegate = SwiftLoggerRouterBase.LoggerRouterDelegate
+
 public extension LoggerRouter {
     /// Starts a new HTTP endpoint for logging (not secure, anyone and anything can log to it)
     /// - parameters:

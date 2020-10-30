@@ -1,5 +1,9 @@
 # Change Log
 
+### 1.1.1 - 2020.10.30
+
+- Pandemic special! fixed a couple of lingering issues loosely connected to race conditions and deallocs
+
 ### 1.1.0 - 2020.10.23
 
 - Split the implementations to allow for partial loading (should not change the visible interface from SwiftLogger)
