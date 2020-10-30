@@ -8,7 +8,6 @@ extension SwiftLoggerClientTests {
     static let __allTests__SwiftLoggerClientTests = [
         ("testHTTP", testHTTP),
         ("testHTTPData", testHTTPData),
-        ("testNetwork", testNetwork),
     ]
 }
 

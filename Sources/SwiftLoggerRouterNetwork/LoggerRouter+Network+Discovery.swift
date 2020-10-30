@@ -28,6 +28,7 @@ public class NetworkLoggerRouter : LoggerRouter, PeerConnectionDelegate {
     }
     let passcode: String /// The passcode used to encrypt the communication
     
+    private var connectionsLock = NSLock()
     private var networkConnections : [PeerConnection] = []
     
     /// Create a listener with a name to advertise, a passcode for authentication,
@@ -103,7 +104,9 @@ public class NetworkLoggerRouter : LoggerRouter, PeerConnectionDelegate {
             }
             
             listener.newConnectionHandler = { newConnection in
+                self.connectionsLock.lock()
                 self.networkConnections.append(PeerConnection(connection: newConnection, delegate: self))
+                self.connectionsLock.unlock()
             }
             
             // Start listening, and request updates on the main queue.
@@ -154,8 +157,11 @@ public class NetworkLoggerRouter : LoggerRouter, PeerConnectionDelegate {
     }
     
     public func connectionFailed(_ conn: PeerConnection) {
+        // sometimes weird, will use locks
+        connectionsLock.lock()
         networkConnections.removeAll(where: { $0 == conn })
-        delegate?.connectionReady(conn)
+        connectionsLock.unlock()
+        delegate?.connectionFailed(conn)
         
         if delegate == nil {
             logToDelegates(loggerData: LoggerData(appName: "LoggerServer",

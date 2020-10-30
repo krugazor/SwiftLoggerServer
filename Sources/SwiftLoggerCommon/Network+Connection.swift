@@ -54,6 +54,11 @@ public class PeerConnection : Equatable {
 
         startConnection()
     }
+    
+    deinit {
+        cancel()
+        delegate = nil
+    }
 
     public func cancel() {
         if let connection = self.connection {
