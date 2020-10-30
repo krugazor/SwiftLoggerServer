@@ -125,7 +125,7 @@ Just add this package as you normally would.
 Add the following to your dependencies:
 
 ```swift
-.package(name: "SwiftLogger", url: "https://gitlab.krugazor.eu/logger/swiftloggerserver", from: "1.0.0"),
+.package(name: "SwiftLogger", url: "https://github.com/krugazor/SwiftLoggerServer", from: "1.1.0"),
 
 ```
 
